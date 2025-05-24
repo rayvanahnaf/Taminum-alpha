@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pos/providers/theme_providers.dart';
+import 'package:flutter_pos/widgets/auth/pages/login_page.dart';
 import 'package:provider/provider.dart';
 import 'screens/dashboard/dashboard_screen.dart';
 
@@ -34,9 +35,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFF111315),
         appBarTheme: const AppBarTheme(backgroundColor: Colors.black),
       ),
-      home: DashboardScreen(
-        onToggleTheme: () => themeProvider.toggleTheme(),
-      ),
-    );
+      home: const LoginPage(),
+      );
   }
 }
