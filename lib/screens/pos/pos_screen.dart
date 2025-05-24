@@ -15,6 +15,9 @@ class _PosScreenState extends State<PosScreen> {
   String selectedCategory = 'Coffee';
   final Map<Product, int> cart = {};
 
+  final customerNameController = TextEditingController();
+  final tableController = TextEditingController();
+
   final List<Product> allProducts = [
     Product(name: 'Espresso', price: 4.2, imageUrl: 'assets/coffee.png', category: 'Coffee'),
     Product(name: 'Latte', price: 4.0, imageUrl: 'assets/coffee 1.png', category: 'Coffee'),
@@ -113,6 +116,13 @@ class _PosScreenState extends State<PosScreen> {
         }).toList(),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    customerNameController.dispose();
+    tableController.dispose();
+    super.dispose();
   }
 
   @override
@@ -250,10 +260,20 @@ class _PosScreenState extends State<PosScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
-                        children: const [
-                          Expanded(child: TextField(decoration: InputDecoration(labelText: 'Customer name'))),
-                          SizedBox(width: 8),
-                          Expanded(child: TextField(decoration: InputDecoration(labelText: 'Table'))),
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: customerNameController,
+                              decoration: const InputDecoration(labelText: 'Customer name'),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: TextField(
+                              controller: tableController,
+                              decoration: const InputDecoration(labelText: 'Table'),
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 16),
@@ -290,58 +310,76 @@ class _PosScreenState extends State<PosScreen> {
                                       children: [
                                         Text(product.name,
                                             style: const TextStyle(fontWeight: FontWeight.bold)),
-                                        Text('\$${product.price.toStringAsFixed(2)} x$qty'),
-                                        const Text('Medium • Less Sugar',
-                                            style: TextStyle(fontSize: 12, color: Colors.grey)),
+                                        Text('\$${product.price.toStringAsFixed(2)}'),
                                       ],
                                     ),
                                   ),
                                   Row(
-                                    mainAxisSize: MainAxisSize.min,
                                     children: [
                                       IconButton(
-                                        icon: const Icon(Icons.remove, size: 20),
+                                        icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
                                         onPressed: () => _changeQuantity(product, -1),
                                       ),
                                       Text('$qty'),
                                       IconButton(
-                                        icon: const Icon(Icons.add, size: 20),
+                                        icon: const Icon(Icons.add_circle_outline, color: Colors.green),
                                         onPressed: () => _changeQuantity(product, 1),
                                       ),
                                     ],
-                                  )
+                                  ),
                                 ],
                               ),
                             );
                           }).toList(),
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      Text('Subtotal: \$${total.toStringAsFixed(2)}'),
-                      Text('Tax: \$${(total * 0.1).toStringAsFixed(2)}'),
-                      Text('Total: \$${(total * 1.1).toStringAsFixed(2)}',
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Total: \$${total.toStringAsFixed(2)}',
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
                       const SizedBox(height: 12),
                       ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
+                        onPressed: cart.isEmpty
+                            ? null
+                            : () {
+                          final customerName = customerNameController.text.trim();
+                          final table = tableController.text.trim();
+
+                          if (customerName.isEmpty || table.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Please fill customer name and table'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                            return;
+                          }
+
+                          Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => OrderConfirmationPage(
-                                cart: cart,
-                                total: total,
+                                cart: Map<Product, int>.from(cart),
+                                total: total, // <== ini harus kamu hitung dulu
+                                customerName: customerName,
+                                table: table,
                               ),
                             ),
                           );
                         },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          minimumSize: const Size.fromHeight(48),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                        ),
                         child: const Text('Place Order'),
                       ),
                     ],
                   ),
-                )
+                ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
