@@ -1,20 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pos/widgets/auth/pages/login_page.dart';
+import 'package:flutter_pos/models/product.dart';
 import 'package:flutter_pos/screens/pos/order_confirmation_page.dart';
+import 'package:flutter_pos/widgets/auth/pages/login_page.dart';
 
-class Product {
-  final String name;
-  final double price;
-  final String imageUrl;
-  final String category;
-
-  Product({
-    required this.name,
-    required this.price,
-    required this.imageUrl,
-    required this.category,
-  });
-}
 
 class PosScreen extends StatefulWidget {
   const PosScreen({Key? key}) : super(key: key);
@@ -334,15 +322,19 @@ class _PosScreenState extends State<PosScreen> {
                       Text('Total: \$${(total * 1.1).toStringAsFixed(2)}',
                           style: const TextStyle(fontWeight: FontWeight.bold)),
                       const SizedBox(height: 12),
-                      ElevatedButton.icon(
-                        icon: const Icon(Icons.check_circle),
-                        label: Text('Place Order   \$${(total * 1.1).toStringAsFixed(2)}'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          minimumSize: const Size(double.infinity, 50),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                        ),
-                        onPressed: () {},
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => OrderConfirmationPage(
+                                cart: cart,
+                                total: total,
+                              ),
+                            ),
+                          );
+                        },
+                        child: const Text('Place Order'),
                       ),
                     ],
                   ),
