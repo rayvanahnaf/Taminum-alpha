@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pos/widgets/auth/pages/login_page.dart';
+import 'package:flutter_pos/screens/pos/order_confirmation_page.dart';
 
 class Product {
   final String name;
@@ -175,25 +177,15 @@ class _PosScreenState extends State<PosScreen> {
                       child: const Text('Report', style: TextStyle(color: Colors.green)),
                     ),
                     const SizedBox(width: 16),
-                    Stack(
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.notifications_none),
-                          onPressed: () {},
-                        ),
-                        Positioned(
-                          right: 4,
-                          top: 4,
-                          child: Container(
-                            width: 8,
-                            height: 8,
-                            decoration: const BoxDecoration(
-                              color: Colors.red,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        ),
-                      ],
+                    IconButton(
+                      icon: const Icon(Icons.logout),
+                      tooltip: 'Logout',
+                      onPressed: () {
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => const LoginPage()),
+                              (route) => false,
+                        );
+                      },
                     ),
                     const CircleAvatar(
                       backgroundImage: AssetImage('assets/user.png'),

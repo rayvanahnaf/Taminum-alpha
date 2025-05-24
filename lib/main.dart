@@ -36,6 +36,6 @@ class MyApp extends StatelessWidget {
         appBarTheme: const AppBarTheme(backgroundColor: Colors.black),
       ),
       home: const LoginPage(),
-      );
+    );
   }
 }
